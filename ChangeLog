@@ -1,0 +1,58 @@
+2006-11-16    <enhance@exponent.dcs.ed.ac.uk>
+
+	* PREAMBLE
+	This is final working library with preamble messages.
+
+2006-11-10    <enhance@exponent.dcs.ed.ac.uk>
+
+	* SUMMARY
+	Improved summary generation code. Now separated from PEPA.
+
+2006-11-07    <enhance@exponent.dcs.ed.ac.uk>
+
+	* MEM
+	Introduced memory accountant. The set of interfaces are internal
+	to the eSkel library, and is used to check memory leaks within the
+	library implementation. [The excellent Valgrind is sometimes hard
+	to use with multiple processes.]
+
+	* SCHED
+	Error checking support for failure at scheduler
+	initialisation: disables the dynamic scheduling support.
+
+2006-11-06    <enhance@exponent.dcs.ed.ac.uk>
+
+	* NICE
+	There is now a theoretical computation of the expected CPU
+	availability based on the nice values of all the user processes
+	currently alive. This value will be used when the contribution of
+	a process to the total utilisation '->contrib' is zero.
+
+2006-11-03    <enhance@exponent.dcs.ed.ac.uk>
+
+	* TIMING
+	Timing is now working. Median is used instead of average. Somehow,
+	the first mesaurement of the task duration is unusually large. I
+	think it is because I am executing all the processes on the same
+	node. Should run it on the Beowulf.
+
+2006-09-09    <gagarine@florence>
+
+	* STATE
+	Made lots of lovely changes for handling state transfer. It
+	seems that eskel_state_commit() is more important than ever. For
+	example, if some state is registered in one task and if this task
+	is switched between two nodes alternatively, the node leaving the
+	execution of this task should send the existing state. This,
+	however cannot be done until eskel_state_commit() is executed, or
+	the node enters the wait state. For this, some significant changes
+	have been introduced.
+
+	1. No more eskel_state_commit(). Replaced by eskel_begin() which
+	should be invoked after registering the states, but before
+	entering the task loop.
+	2. Replaced "return ESKEL_COMPLETED" with a corresponding
+	eskel_end() which should be invoked as the last function before
+	the task function exists.
+
+

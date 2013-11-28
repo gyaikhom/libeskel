@@ -1,0 +1,83 @@
+#!/bin/sh
+# $Id$
+
+ver_file="$1"
+options="$2"
+
+if test "$ver_file" = ""; then
+	options="-h"
+else
+#
+# Get the version numbers from the version file.
+#
+	LIBESKEL_VER_MAJOR="`cat $ver_file | grep major | cut -d= -f2`"
+	LIBESKEL_VER_MINOR="`cat $ver_file | grep minor | cut -d= -f2`"
+	LIBESKEL_VER_RELEASE="`cat $ver_file | grep release | cut -d= -f2`"
+	LIBESKEL_VER_ALPHA="`cat $ver_file | grep alpha | cut -d= -f2`"
+	LIBESKEL_VER_BETA="`cat $ver_file | grep beta | cut -d= -f2`"
+
+#
+# Check if release is necessary.
+#
+	if test "$LIBESKEL_VER_RELEASE" != "0" -a "LIBESKEL_VER_RELEASE" != ""; then
+		LIBESKEL_VER="$LIBESKEL_VER_MAJOR.$LIBESKEL_VER_MINOR.$LIBESKEL_VER_RELEASE"
+    else
+        LIBESKEL_VER="$LIBESKEL_VER_MAJOR.$LIBESKEL_VER_MINOR"
+	fi
+
+#
+# Check if alpha or beta version.
+#
+    if test "`expr $LIBESKEL_VER_ALPHA \> 0`" = "1"; then
+        LIBESKEL_VER="${LIBESKEL_VER}a$LIBESKEL_VER_ALPHA"
+    elif test "`expr $LIBESKEL_VER_BETA \> 0`" = "1"; then
+        LIBESKEL_VER="${LIBESKEL_VER}b$LIBESKEL_VER_BETA"
+	fi
+
+#
+# If no options were provided, assume all.
+#
+	if test "$options" = ""; then
+		options="-a"
+	fi
+fi
+
+#
+# Display the values.
+#
+case "$options" in
+	-f)
+		echo $LIBESKEL_VER
+        ;;
+	-M)
+		echo $LIBESKEL_VER_MAJOR
+        ;;
+	-m)
+		echo $LIBESKEL_VER_MINOR
+        ;;
+	-r)
+		echo $LIBESKEL_VER_RELEASE
+        ;;
+	-a)
+		echo $LIBESKEL_VER_ALPHA
+        ;;
+	-b)
+		echo $LIBESKEL_VER_BETA
+        ;;
+	-h)
+        	cat << EOF
+$0 <VERSION_FILE> [<options>]
+Options:
+	-f Full version
+	-M Major
+   	-m Minor
+	-r Release
+	-a Alpha
+	-b Beta
+	-h Help message
+EOF
+esac
+
+exit 0
+
+# End of file

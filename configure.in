@@ -1,0 +1,126 @@
+#*********************************************************************
+#
+#  Edinburgh Skeleton Library (eskel)
+#
+#  THE ENHANCE PROJECT
+#  School of Informatics,
+#  University of Edinburgh,
+#  Edinburgh - EH9 3JZ
+#  United Kingdom
+#
+#  Written by: Gagarine Yaikhom
+#
+#*********************************************************************
+
+AC_PREREQ(2.59)
+AC_INIT([libeskel/eskel.c])
+
+# Get libeskel version fro VERSION
+LIBESKEL_GET_VERSION(${srcdir}/m4, ${srcdir}/VERSION)
+
+echo \
+"
+-----------------------------------------------------------------------
+Edinburgh Skeleton Library (libeskel)
+Version ${LIBESKEL_VERSION}
+
+THE ENHANCE PROJECT
+School of Informatics,
+University of Edinburgh,
+Edinburgh - EH9 3JZ
+United Kingdom
+-----------------------------------------------------------------------"
+
+AC_CONFIG_SRCDIR([libeskel/eskel.c])
+AM_CONFIG_HEADER([libeskel/config.h]:[libeskel/config-h.in])
+AC_CONFIG_AUX_DIR(./config)
+
+# Initialise automake
+AM_INIT_AUTOMAKE(libeskel, ${LIBESKEL_VERSION})
+
+# Checks for programs.
+AC_PROG_AWK
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_RANLIB
+
+# Checks for libraries.
+AC_CHECK_LIB(m, ceil)
+AC_CHECK_LIB(pthread, pthread_create)
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([netdb.h netinet/in.h stdlib.h string.h strings.h sys/file.h sys/socket.h sys/time.h unistd.h pthread.h mpi.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_SIZE_T
+AC_HEADER_TIME
+AC_C_VOLATILE
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_FUNC_SELECT_ARGTYPES
+AC_CHECK_FUNCS([gethostbyname gettimeofday memset select socket])
+
+# Enable interface error messaging: --enable-errmsg [default=yes]
+AC_MSG_CHECKING(whether to enable interface error messaging)
+errmsg_default="yes"
+AC_ARG_ENABLE(errmsg, [  --enable-errmsg=[no/yes]   turn on error messaging (default=yes)],
+	, enable_errmsg=$errmsg_default)
+if test "x$enable_errmsg" = "xyes"; then
+CFLAGS="$CFLAGS -DESKEL_SHOW_ERROR"
+AC_MSG_RESULT(yes)
+else
+AC_MSG_RESULT(no)
+fi
+
+# Set internal protection.
+CFLAGS="$CFLAGS -Wall -D__ESKEL_COMPILE"
+
+if test "$prefix" = "NONE"; then
+echo "Prefix not used"
+CFLAGS="$CFLAGS -D__ESKEL_INSTALL_PATH=/usr/local"
+else
+CFLAGS="$CFLAGS -D__ESKEL_INSTALL_PATH=$prefix"
+fi
+#CC="/home/enhance/OPENMPI/bin/mpicc"
+
+AC_SUBST(ac_aux_dir)
+
+# Generate Makefiles
+AC_OUTPUT([
+Makefile
+libeskel/Makefile
+examples/Makefile
+])
+
+echo \
+"
+-----------------------------------------------------------------------
+Edinburgh Skeleton Library (libeskel)
+Version ${LIBESKEL_VERSION}
+
+THE ENHANCE PROJECT
+School of Informatics,
+University of Edinburgh,
+Edinburgh - EH9 3JZ
+United Kingdom
+
+-----------------------------------------------------------------------
+    Source code location: ${srcdir}
+                Compiler: ${CC}
+          Compiler flags: 
+-----------------------------------------------------------------------
+${CFLAGS}
+-----------------------------------------------------------------------
+        Host System Type: ${host}
+            Install path: ${prefix}
+
+Run the following commands to build and install:
+$ make
+$ make install
+
+-----------------------------------------------------------------------"
+
+# End of file

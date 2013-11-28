@@ -1,0 +1,17 @@
+#!/bin/sh
+# bootstrap
+# $Id$
+#
+# NOTE:
+# Use this script to generate project files.
+
+set -x
+aclocal -I ./m4 -I ./config
+autoheader
+automake --add-missing --copy
+autoconf
+
+# Generate tags (very handy)
+etags `find . -iname '*.[c,h]'`
+
+# End of file.
